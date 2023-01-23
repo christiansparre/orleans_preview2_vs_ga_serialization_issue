@@ -49,6 +49,23 @@ namespace Tests
         }
 
         [Fact]
+        public void Can_Roundtrip_WithListOfObject_Pear()
+        {
+            var original = new WithListOfObject
+            {
+                Items = new List<object> { new Pear(1, "Conference"), },
+                Bar = new Foo(Guid.NewGuid())
+            };
+
+            var bytes = _serializer.SerializeToArray(original);
+
+            var deserialized = _serializer.Deserialize<WithListOfObject>(bytes);
+
+            Assert.NotNull(deserialized.Bar);
+            Assert.Equal(original.Bar, deserialized.Bar);
+        }
+
+        [Fact]
         public void Can_Roundtrip_WithListOfFruit_Fruit()
         {
             var original = new WithListOfFruit()
@@ -161,6 +178,10 @@ namespace Tests
 
     [GenerateSerializer]
     public record Apple(string Name) : Fruit(Name);
+
+
+    [GenerateSerializer]
+    public record Pear([property: Id(1)] int Id, string Name) : Fruit(Name);
 
 
     [GenerateSerializer]
